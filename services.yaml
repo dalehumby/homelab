@@ -1,0 +1,29 @@
+---
+- name: Add required folders, config files etc for all my services
+  hosts: localhost
+  connection: local
+  become: yes
+  become_user: root
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+
+    - name: Create Mosquitto data dir
+      file:
+        path: /home/pi/volumes/mosquitto/data
+        state: directory
+
+    - name: Create Mosquitto logs dir
+      file:
+        path: /home/pi/volumes/mosquitto/logs
+        state: directory
+
+    - name: Create Mosquitto config dir
+      file:
+        path: /home/pi/services/mosquitto
+        state: directory
+
+    - name: Copy Mosquitto config file
+      copy:
+        src: ./mosquitto/mosquitto.conf
+        dest: /home/pi/services/mosquitto/mosquitto.conf
