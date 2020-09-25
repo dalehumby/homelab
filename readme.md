@@ -6,15 +6,21 @@ Uses Ansible to set up Docker, Docker-Compose and provision the server
 - `apt upgrade`
 - change hostname
 - `sudo apt install ansible`
-- git get the provisioning repo
+- `git clone https://github.com/dalehumby/rpi-provision.git`
 - `cd rpi-provision`
-- `ansible-playbook provision.yaml`
 
-## Running the provisioning script
+## Run the provisioning script
 At present I am assuming that this playbook is run locally, and not on remote hosts.
+- Set up base OS: `ansible-playbook provision.yaml`
+- Set up files and folders for the services: `ansible-playbook services.yaml`
+
+Then start the services:
+`docker-compose up -d`
+
+(TODO auto run this after restart)
 
 ## My hardware
-I am using a Raspberry Pi 4b with 4 GB RAM and 128 GB micro SD card
+I am using a [Raspberry Pi 4B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) with 4 GB RAM and 128 GB Micro SD card
 
 ## Acknowledgments
 - https://github.com/glennklockwood/rpi-ansible
