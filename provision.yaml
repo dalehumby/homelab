@@ -1,0 +1,68 @@
+---
+- name: Provision a new Raspberry Pi
+  hosts: localhost
+  connection: local
+  become: yes
+  become_user: root
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+
+    # Minimal changes to OS
+    - name: Set timezone
+      command: "timedatectl set-timezone Etc/UTC"
+
+    - name: Set locale
+      command: "raspi-config nonint do_change_locale en_GB.UTF-8"
+
+    - name: Set wifi country
+      command: "raspi-config nonint do_wifi_country ZA"
+
+    - name: Enable SSH
+      command: "raspi-config nonint do_ssh 0"
+
+    - name: Disable swap file
+      command: "dphys-swapfile swapoff"
+
+    - name: Uninsall swap file
+      command: "dphys-swapfile uninstall"
+
+    - name: Remove swap file
+      command: "update-rc.d dphys-swapfile remove"
+
+    - name: Log to ram disk
+      lineinfile:
+        dest: /etc/fstab
+        regexp: "tmpfs\\s+\\/var\\/log"
+        line: "tmpfs    /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0"
+
+    # Basic software to make machine more usable if I need to
+    - name: Install required software
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - vim
+
+    # Docker and Docker Compose
+    - name: Download Docker Engine installer
+      get_url:
+        url: https://get.docker.com
+        dest: ./get-docker.sh
+        mode: 'u+rwx'
+
+    - name: Install Docker Engine
+      script: ./get-docker.sh
+
+    - name: Remove get-docker installer script
+      file:
+        path: ./get-docker.sh
+        state: absent
+
+    - name: Add pi to docker group
+      command: "usermod -aG docker pi"
+
+    - name: Install Docker Compose
+      command: "pip3 -v install docker-compose"
