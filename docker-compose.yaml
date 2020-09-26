@@ -39,15 +39,16 @@ services:
       - /home/pi/volumes/prometheus/data:/prometheus
 
 
-    grafana:
-      container_name: grafana
-      image: grafana/grafana
-      restart: unless-stopped
-      ports:
-        - 3000:3000
-      env_file:
-        - /home/pi/services/grafana/grafana.env
-      volumes:
-        - /home/pi/volumes/grafana/data:/var/lib/grafana
-        - /var/log/grafana:/var/log/grafana
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    user: "0"
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    env_file:
+      - /home/pi/services/grafana/grafana.env
+    volumes:
+      - /home/pi/volumes/grafana/data:/var/lib/grafana
+      - /var/log/grafana:/var/log/grafana
 

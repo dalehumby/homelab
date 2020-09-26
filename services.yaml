@@ -41,8 +41,21 @@
       copy:
         src: ./prometheus/prometheus.yml
         dest: /home/pi/services/prometheus/prometheus.yml
-        force: no  # Don't replace the file
 
     # Grafana
+    - name: Create Grafana data dir
+      file:
+        path: /home/pi/volumes/grafana/data
+        state: directory
+
+    - name: Create Grafana config dir
+      file:
+        path: /home/pi/services/grafana
+        state: directory
+
+    - name: Copy Grafana env variables file
+      copy:
+        src: ./grafana/grafana.env
+        dest: /home/pi/services/grafana/grafana.env
 
     # Home Assistant
