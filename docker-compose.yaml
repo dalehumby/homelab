@@ -12,3 +12,42 @@ services:
       - /var/log:/mosquitto/log
       - /home/pi/services/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
 
+  node-exporter:
+    container_name: node-exporter
+    image: prom/node-exporter
+    restart: unless-stopped
+    ports:
+      - 9100:9100
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    volumes:
+      - /home/pi/services/prometheus:/etc/prometheus
+      - /home/pi/volumes/prometheus/data:/prometheus
+
+
+    grafana:
+      container_name: grafana
+      image: grafana/grafana
+      restart: unless-stopped
+      ports:
+        - 3000:3000
+      env_file:
+        - /home/pi/services/grafana/grafana.env
+      volumes:
+        - /home/pi/volumes/grafana/data:/var/lib/grafana
+        - /var/log/grafana:/var/log/grafana
+

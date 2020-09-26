@@ -2,6 +2,7 @@
 Uses Ansible to set up Docker, Docker-Compose and provision the server
 
 ## Steps to perform before running the Ansible Playbook
+- Change the default password `passwd`
 - `apt update`
 - `apt upgrade`
 - change hostname

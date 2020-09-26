@@ -8,14 +8,10 @@
     ansible_python_interpreter: /usr/bin/python3
   tasks:
 
+    # Mosquitto MQTT Broker
     - name: Create Mosquitto data dir
       file:
         path: /home/pi/volumes/mosquitto/data
-        state: directory
-
-    - name: Create Mosquitto logs dir
-      file:
-        path: /home/pi/volumes/mosquitto/logs
         state: directory
 
     - name: Create Mosquitto config dir
@@ -27,3 +23,26 @@
       copy:
         src: ./mosquitto/mosquitto.conf
         dest: /home/pi/services/mosquitto/mosquitto.conf
+
+    # Prometheus
+    - name: Create Prometheus data dir
+      # See https://stackoverflow.com/questions/50009065/how-to-persist-data-in-prometheus-running-in-a-docker-container
+      file:
+        path: /home/pi/volumes/prometheus/data
+        state: directory
+        owner: nobody
+
+    - name: Create Prometheus config dir
+      file:
+        path: /home/pi/services/prometheus
+        state: directory
+
+    - name: Copy Prometheus config file
+      copy:
+        src: ./prometheus/prometheus.yml
+        dest: /home/pi/services/prometheus/prometheus.yml
+        force: no  # Don't replace the file
+
+    # Grafana
+
+    # Home Assistant
