@@ -8,7 +8,7 @@ services:
     ports:
       - 1883:1883
     volumes:
-      - /home/pi/volumes/mosquitto/data:/mosquitto/data
+      - /home/pi/volumes/mosquitto/:/mosquitto/data
       - /var/log:/mosquitto/log
       - /home/pi/services/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
 
@@ -36,8 +36,7 @@ services:
       - 9090:9090
     volumes:
       - /home/pi/services/prometheus:/etc/prometheus
-      - /home/pi/volumes/prometheus/data:/prometheus
-
+      - /home/pi/volumes/prometheus/:/prometheus
 
   grafana:
     container_name: grafana
@@ -49,6 +48,14 @@ services:
     env_file:
       - /home/pi/services/grafana/grafana.env
     volumes:
-      - /home/pi/volumes/grafana/data:/var/lib/grafana
+      - /home/pi/volumes/grafana/:/var/lib/grafana
       - /var/log/grafana:/var/log/grafana
+
+  homeassistant:
+    container_name: homeassistant
+    image: homeassistant/raspberrypi4-homeassistant:stable
+    volumes:
+      - /home/pi/volumes/homeassistant:/config
+    restart: unless-stopped
+    network_mode: host
 

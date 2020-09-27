@@ -3,7 +3,7 @@
   hosts: localhost
   connection: local
   become: yes
-  become_user: root
+  become_user: pi
   vars:
     ansible_python_interpreter: /usr/bin/python3
   tasks:
@@ -11,7 +11,7 @@
     # Mosquitto MQTT Broker
     - name: Create Mosquitto data dir
       file:
-        path: /home/pi/volumes/mosquitto/data
+        path: /home/pi/volumes/mosquitto
         state: directory
 
     - name: Create Mosquitto config dir
@@ -28,7 +28,7 @@
     - name: Create Prometheus data dir
       # See https://stackoverflow.com/questions/50009065/how-to-persist-data-in-prometheus-running-in-a-docker-container
       file:
-        path: /home/pi/volumes/prometheus/data
+        path: /home/pi/volumes/prometheus
         state: directory
         owner: nobody
 
@@ -45,7 +45,7 @@
     # Grafana
     - name: Create Grafana data dir
       file:
-        path: /home/pi/volumes/grafana/data
+        path: /home/pi/volumes/grafana
         state: directory
 
     - name: Create Grafana config dir
@@ -59,3 +59,7 @@
         dest: /home/pi/services/grafana/grafana.env
 
     # Home Assistant
+    - name: Checkout Home Assistant configs
+      git:
+        repo: git@github.com:dalehumby/homeassistant-config.git
+        dest: /home/pi/volumes/homeassistant

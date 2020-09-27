@@ -3,7 +3,7 @@
   hosts: localhost
   connection: local
   become: yes
-  become_user: root
+  become_user: pi
   vars:
     ansible_python_interpreter: /usr/bin/python3
   tasks:
