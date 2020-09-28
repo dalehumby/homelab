@@ -60,10 +60,13 @@ services:
     network_mode: host
 
   timemachine:
-    # NOTE: Assumes user `timecapsule` already exists on the system and is the owner of `/media/tm`
+    # NOTE: Assumes user `timemachine` already exists on the system and is the owner of `/media/tm`
     container_name: timemachine
     image: mbentley/timemachine:smb-armv7l
-    volumes:
-      - /media/tm:/opt/timemachine
     restart: unless-stopped
     network_mode: host
+    environment:
+      - TM_UID=111
+      - TM_GID=115
+    volumes:
+      - /media/tm:/opt/timemachine
