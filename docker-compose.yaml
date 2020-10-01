@@ -2,8 +2,9 @@ version: '3.8'
 services:
 
   mosquitto:
-    container_name: mosquitto
     image: eclipse-mosquitto
+    networks:
+      - homenet
     restart: unless-stopped
     ports:
       - 1883:1883
@@ -13,8 +14,9 @@ services:
       - /var/log:/mosquitto/log
 
   node-exporter:
-    container_name: node-exporter
     image: prom/node-exporter
+    networks:
+      - homenet
     restart: unless-stopped
     ports:
       - 9100:9100
@@ -29,8 +31,9 @@ services:
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
 
   prometheus:
-    container_name: prometheus
     image: prom/prometheus
+    networks:
+      - homenet
     restart: unless-stopped
     ports:
       - 9090:9090
@@ -39,8 +42,9 @@ services:
       - /media/cluster/data/prometheus/:/prometheus
 
   grafana:
-    container_name: grafana
     image: grafana/grafana
+    networks:
+      - homenet
     user: "0"
     restart: unless-stopped
     ports:
@@ -52,21 +56,33 @@ services:
       - /var/log/grafana:/var/log/grafana
 
   homeassistant:
-    container_name: homeassistant
     image: homeassistant/raspberrypi4-homeassistant:stable
+    networks:
+      - homenet
+    restart: unless-stopped
+    ports:
+      - 8123:8123  # Note some auto-discovery might not work
     volumes:
       - /media/cluster/data/homeassistant:/config
-    restart: unless-stopped
-    network_mode: host
 
   timemachine:
     # NOTE: Assumes user `timemachine` already exists on the system and is the owner of `/media/tm`
-    container_name: timemachine
     image: mbentley/timemachine:smb-armv7l
+    networks:
+      - homenet
     restart: unless-stopped
-    network_mode: host
+    ports:
+      - 137:137/udp
+      - 138:138/udp
+      - 139:139
+      - 445:445
     environment:
       - TM_UID=111
       - TM_GID=115
     volumes:
       - /media/tm:/opt/timemachine
+
+networks:
+    homenet:
+        driver: overlay
+        attachable: true
