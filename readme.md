@@ -20,8 +20,6 @@ At present I am assuming that this playbook is run locally, and not on remote ho
 Then start the services:
 `docker-compose up -d`
 
-(TODO auto run this after restart)
-
 ## Directory layout
 Ansible will create 2 directories in the pi users home directory:
 - `services`: configuration used when starting the service, assumed to not change while the service is running

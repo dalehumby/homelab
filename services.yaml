@@ -11,55 +11,55 @@
     # Mosquitto MQTT Broker
     - name: Create Mosquitto data dir
       file:
-        path: /home/pi/volumes/mosquitto
+        path: /media/cluster/data/mosquitto
         state: directory
 
     - name: Create Mosquitto config dir
       file:
-        path: /home/pi/services/mosquitto
+        path: /media/cluster/config/mosquitto
         state: directory
 
     - name: Copy Mosquitto config file
       copy:
         src: ./mosquitto/mosquitto.conf
-        dest: /home/pi/services/mosquitto/mosquitto.conf
+        dest: /media/cluster/config/mosquitto/mosquitto.conf
 
     # Prometheus
     - name: Create Prometheus data dir
       # See https://stackoverflow.com/questions/50009065/how-to-persist-data-in-prometheus-running-in-a-docker-container
       file:
-        path: /home/pi/volumes/prometheus
+        path: /media/cluster/data/prometheus
         state: directory
         owner: nobody
 
     - name: Create Prometheus config dir
       file:
-        path: /home/pi/services/prometheus
+        path: /media/cluster/config/prometheus
         state: directory
 
     - name: Copy Prometheus config file
       copy:
         src: ./prometheus/prometheus.yml
-        dest: /home/pi/services/prometheus/prometheus.yml
+        dest: /media/cluster/config/prometheus/prometheus.yml
 
     # Grafana
     - name: Create Grafana data dir
       file:
-        path: /home/pi/volumes/grafana
+        path: /media/cluster/data/grafana
         state: directory
 
     - name: Create Grafana config dir
       file:
-        path: /home/pi/services/grafana
+        path: /media/cluster/config/grafana
         state: directory
 
     - name: Copy Grafana env variables file
       copy:
         src: ./grafana/grafana.env
-        dest: /home/pi/services/grafana/grafana.env
+        dest: /media/cluster/config/grafana/grafana.env
 
     # Home Assistant
     - name: Checkout Home Assistant configs
       git:
         repo: git@github.com:dalehumby/homeassistant-config.git
-        dest: /home/pi/volumes/homeassistant
+        dest: /media/cluster/data/homeassistant

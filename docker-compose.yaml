@@ -8,9 +8,9 @@ services:
     ports:
       - 1883:1883
     volumes:
-      - /home/pi/volumes/mosquitto/:/mosquitto/data
+      - /media/cluster/config/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - /media/cluster/data/mosquitto/:/mosquitto/data
       - /var/log:/mosquitto/log
-      - /home/pi/services/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
 
   node-exporter:
     container_name: node-exporter
@@ -35,8 +35,8 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - /home/pi/services/prometheus:/etc/prometheus
-      - /home/pi/volumes/prometheus/:/prometheus
+      - /media/cluster/config/prometheus:/etc/prometheus
+      - /media/cluster/data/prometheus/:/prometheus
 
   grafana:
     container_name: grafana
@@ -46,16 +46,16 @@ services:
     ports:
       - 3000:3000
     env_file:
-      - /home/pi/services/grafana/grafana.env
+      - /media/cluster/config/grafana/grafana.env
     volumes:
-      - /home/pi/volumes/grafana/:/var/lib/grafana
+      - /media/cluster/data/grafana/:/var/lib/grafana
       - /var/log/grafana:/var/log/grafana
 
   homeassistant:
     container_name: homeassistant
     image: homeassistant/raspberrypi4-homeassistant:stable
     volumes:
-      - /home/pi/volumes/homeassistant:/config
+      - /media/cluster/data/homeassistant:/config
     restart: unless-stopped
     network_mode: host
 
