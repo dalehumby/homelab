@@ -5,7 +5,8 @@ Uses Ansible to set up Docker, Docker-Compose and provision the server
 - Change the default password `passwd`
 - `apt update`
 - `apt upgrade`
-- change hostname
+- change hostname using `sudo raspi-config` under Networking
+- setup static IP `sudo nano /etc/dhcpcd.conf`
 - `sudo apt install ansible`
 - `sudo apt install git`
 - Setup SSH keys (if going to commit)
@@ -16,6 +17,7 @@ Uses Ansible to set up Docker, Docker-Compose and provision the server
 At present I am assuming that this playbook is run locally, and not on remote hosts.
 - Set up base OS: `ansible-playbook provision.yaml`
 - Set up files and folders for the services: `ansible-playbook services.yaml`
+- `sudo reboot`
 
 Then start the services:
 `docker-compose up -d`
