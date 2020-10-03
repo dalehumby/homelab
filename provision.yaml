@@ -3,7 +3,7 @@
   hosts: localhost
   connection: local
   become: yes
-  become_user: pi
+  become_user: root
   vars:
     ansible_python_interpreter: /usr/bin/python3
   tasks:
@@ -39,13 +39,13 @@
     - name: Setup Apple keyboard
       lineinfile:
         dest: /etc/default/keyboard
-        regecp: "XKBMODEL"
+        regexp: "XKBMODEL"
         line: 'XKBMODEL="apple"'
 
     - name: Setup keyboard layout
       lineinfile:
         dest: /etc/default/keyboard
-        regecp: "XKBLAYOUT"
+        regexp: "XKBLAYOUT"
         line: 'XKBLAYOUT="us"'
 
     # Basic software to make machine more usable if I need to
