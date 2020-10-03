@@ -36,6 +36,18 @@
         regexp: "tmpfs\\s+\\/var\\/log"
         line: "tmpfs    /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0"
 
+    - name: Setup Apple keyboard
+      lineinfile:
+        dest: /etc/default/keyboard
+        regecp: "XKBMODEL"
+        line: 'XKBMODEL="apple"'
+
+    - name: Setup keyboard layout
+      lineinfile:
+        dest: /etc/default/keyboard
+        regecp: "XKBLAYOUT"
+        line: 'XKBLAYOUT="us"'
+
     # Basic software to make machine more usable if I need to
     - name: Install required software
       apt:
@@ -64,5 +76,3 @@
     - name: Add pi to docker group
       command: "usermod -aG docker pi"
 
-    - name: Install Docker Compose
-      command: "pip3 -v install docker-compose"
