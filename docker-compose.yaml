@@ -3,9 +3,6 @@ services:
 
   mosquitto:
     image: eclipse-mosquitto
-    networks:
-      - homenet
-    restart: unless-stopped
     ports:
       - 1883:1883
     volumes:
@@ -15,9 +12,8 @@ services:
 
   node-exporter:
     image: prom/node-exporter
-    networks:
-      - homenet
-    restart: unless-stopped
+    deploy:
+      mode: global
     ports:
       - 9100:9100
     volumes:
@@ -26,15 +22,12 @@ services:
       - /:/rootfs:ro
     command:
       - '--path.procfs=/host/proc'
-      - '--path.rootfs=/rootfs'
       - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
 
   prometheus:
     image: prom/prometheus
-    networks:
-      - homenet
-    restart: unless-stopped
     ports:
       - 9090:9090
     volumes:
@@ -43,10 +36,7 @@ services:
 
   grafana:
     image: grafana/grafana
-    networks:
-      - homenet
     user: "0"
-    restart: unless-stopped
     ports:
       - 3000:3000
     env_file:
@@ -57,20 +47,18 @@ services:
 
   homeassistant:
     image: homeassistant/raspberrypi4-homeassistant:stable
-    networks:
-      - homenet
-    restart: unless-stopped
     ports:
       - 8123:8123  # Note some auto-discovery might not work
     volumes:
       - /media/cluster/data/homeassistant:/config
 
   timemachine:
-    # NOTE: Assumes user `timemachine` already exists on the system and is the owner of `/media/tm`
+    # Assumes user `timemachine` already exists on the system and is the owner of `/media/tm`
     image: mbentley/timemachine:smb-armv7l
-    networks:
-      - homenet
-    restart: unless-stopped
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname==homepi"  # Only deploy on node with external HDD
     ports:
       - 137:137/udp
       - 138:138/udp
@@ -82,7 +70,3 @@ services:
     volumes:
       - /media/tm:/opt/timemachine
 
-networks:
-    homenet:
-        driver: overlay
-        attachable: true
