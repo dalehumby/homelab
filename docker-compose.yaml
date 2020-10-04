@@ -13,7 +13,7 @@ services:
   node-exporter:
     image: prom/node-exporter
     deploy:
-      mode: global
+      mode: global  # Run on each node
     ports:
       - 9100:9100
     volumes:
@@ -44,6 +44,15 @@ services:
     volumes:
       - /media/cluster/data/grafana/:/var/lib/grafana
       - /var/log/grafana:/var/log/grafana
+
+  node-red:
+    image: nodered/node-red:latest
+    ports:
+      - 1880:1880
+    environment:
+      - Africa/Johannesburg
+    volumes:
+      - /media/cluster/data/node-red:/data
 
   homeassistant:
     image: homeassistant/raspberrypi4-homeassistant:stable

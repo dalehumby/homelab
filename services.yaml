@@ -58,6 +58,12 @@
         src: ./grafana/grafana.env
         dest: /media/cluster/config/grafana/grafana.env
 
+    # Node Red
+    - name: Create Node Red data dir
+      file:
+        path: /media/cluster/data/node-red
+        state: directory
+
     # Home Assistant
     - name: Checkout Home Assistant configs
       git:
