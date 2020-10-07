@@ -30,12 +30,6 @@
     - name: Remove swap file
       command: "update-rc.d dphys-swapfile remove"
 
-    - name: Log to ram disk
-      lineinfile:
-        dest: /etc/fstab
-        regexp: "tmpfs\\s+\\/var\\/log"
-        line: "tmpfs    /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0"
-
     - name: Setup Apple keyboard
       lineinfile:
         dest: /etc/default/keyboard
