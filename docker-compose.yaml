@@ -79,3 +79,16 @@ services:
     volumes:
       - /media/tm:/opt/timemachine
 
+  visualizer:
+    image: alexellis2/visualizer-arm:latest
+    ports:
+      - 8080:8080/tcp
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+
