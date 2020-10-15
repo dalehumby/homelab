@@ -16,20 +16,20 @@ Uses Ansible to set up Docker, Docker-Compose and provision the server
 ## Run the provisioning scripts
 At present I am assuming that this playbook is run locally, and not on remote hosts.
 - Set up base OS: `ansible-playbook provision.yaml`
-- Set up files and folders for the services: `ansible-playbook services.yaml`
+- Set up files and directories for the services: `ansible-playbook services.yaml`
 - `sudo reboot`
 
 Then start the services:
 `docker-compose up -d`
 
 ## Directory layout
-Ansible will create 2 directories in the pi users home directory:
-- `services`: configuration used when starting the service, assumed to not change while the service is running
-- `volumes`: Read/Write space for the service while it is running. (Future: mounted to redundant network attached storage.)
+Using `services.yaml`, Ansible will create 2 directories in the `/media/cluster` directory:
+- `config`: configuration used when starting the service, assumed to not change while the service is running
+- `data`: Read/Write space for the service while it is running.
 
-Each service has its own sub-directory in the `services` and `volumes` directories.
+Each service has its own sub-directory in the `config` and `data` directories.
 
-Logs should be written to `/var/logs/`, which is a RAM disk, to reduce flash writes.
+I am using [GlusterFS](https://www.gluster.org/) to mirror the `cluster` volume that contains the `config` and `data` directories between all of my Pi's so that containers have access to config/data no matter which Pi Docker Swarm schedules them to. Setting up Gluster is not yet in the Ansible playbooks.
 
 ## My hardware
 I am using a [Raspberry Pi 4B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) with 4 GB RAM and 128 GB Micro SD card
