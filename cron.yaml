@@ -1,0 +1,52 @@
+# Run containers periodically
+# Deploy stack: docker stack deploy -c cron.yaml cron
+#
+version: "3.8"
+
+services:
+  manager:
+    # Manager container that run the other cron jobs
+    image: crazymax/swarm-cronjob
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - "TZ=Etc/UTC"
+      - "LOG_LEVEL=info"
+      - "LOG_JSON=false"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+  ddns:
+    # Dynamic DNS
+    image: jaedle/alpine-curl-jq-arm32v7
+    command: [ash, -cx, "curl https://europe-west2-home-automtn.cloudfunctions.net/update-ip?api_key=\"$$(cat /run/secrets/cron_ddns_api_key)\""]
+    secrets:
+      - cron_ddns_api_key
+    deploy:
+      mode: replicated
+      replicas: 0
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=*/5 * * * *"
+        - "swarm.cronjob.skip-running=false"
+      restart_policy:
+        condition: none
+
+  prune-nodes:
+    image: docker
+    command: ["docker", "system", "prune", "-f"]
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      mode: global
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=0 0 * * * *"
+        - "swarm.cronjob.skip-running=false"
+      restart_policy:
+        condition: none
+secrets:
+  cron_ddns_api_key:
+    external: true
