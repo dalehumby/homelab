@@ -47,6 +47,7 @@ services:
         - "swarm.cronjob.skip-running=false"
       restart_policy:
         condition: none
+
 secrets:
   cron_ddns_api_key:
     external: true
