@@ -60,6 +60,11 @@ services:
       - 8123:8123  # Note some auto-discovery might not work
     volumes:
       - /media/cluster/data/homeassistant:/config
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.homeassistant.rule=Host(`home.humby.co.za`)
+        - traefik.http.services.homeassistant.loadbalancer.server.port=8123
 
   timemachine:
     # Assumes user `timemachine` already exists on the system and is the owner of `/media/tm`
@@ -82,7 +87,7 @@ services:
   visualizer:
     image: alexellis2/visualizer-arm:latest
     ports:
-      - 8080:8080/tcp
+      - 8081:8080
     deploy:
       placement:
         constraints:
@@ -91,4 +96,38 @@ services:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
+
+  traefik:
+    image: traefik:v2.3
+    command: >
+      --providers.docker=true
+      --providers.docker.swarmmode=true
+      --providers.docker.network=home_default
+      --providers.docker.watch=true
+      --providers.docker.exposedbydefault=false
+      --api=true
+      --api.insecure=true
+      --entrypoints.web.address=:80
+      --log.level=DEBUG
+    ports:
+      - 80:80  # HTTP port
+      - 8080:8080  # Management web UI
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+  whoami:
+    # A container that exposes an API to show its IP address
+    image: traefik/whoami
+    deploy:
+      replicas: 2
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.whoami.rule=Path(`/whoami`)
+        - traefik.http.services.whoami.loadbalancer.server.port=80
 
