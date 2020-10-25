@@ -8,10 +8,13 @@ services:
     command: >
       --providers.docker=true
       --providers.docker.swarmmode=true
+      --providers.docker.network=proxy_default
       --providers.docker.watch=true
+      --providers.docker.exposedbydefault=false
       --api=true
       --api.insecure=true
       --entrypoints.web.address=:80
+      --log.level=INFO
     ports:
       - 80:80  # HTTP port
       - 8080:8080  # Management web UI
@@ -30,6 +33,7 @@ services:
     deploy:
       replicas: 2
       labels:
+        - traefik.enable=true
         - traefik.http.routers.whoami.rule=Path(`/whoami`)
         - traefik.http.services.whoami.loadbalancer.server.port=80
 
