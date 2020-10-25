@@ -1,0 +1,35 @@
+# Example setup: https://github.com/BretFisher/dogvscat
+
+version: '3.8'
+services:
+
+  traefik:
+    image: traefik:v2.3
+    command: >
+      --providers.docker=true
+      --providers.docker.swarmmode=true
+      --providers.docker.watch=true
+      --api=true
+      --api.insecure=true
+      --entrypoints.web.address=:80
+    ports:
+      - 80:80  # HTTP port
+      - 8080:8080  # Management web UI
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+  whoami:
+    # A container that exposes an API to show its IP address
+    image: traefik/whoami
+    deploy:
+      replicas: 2
+      labels:
+        - traefik.http.routers.whoami.rule=Path(`/whoami`)
+        - traefik.http.services.whoami.loadbalancer.server.port=80
+
