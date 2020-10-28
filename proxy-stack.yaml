@@ -1,39 +1,45 @@
-# Example setup: https://github.com/BretFisher/dogvscat
+version: "3.8"
 
-version: '3.8'
 services:
-
   traefik:
     image: traefik:v2.3
-    command: >
-      --providers.docker=true
-      --providers.docker.swarmmode=true
-      --providers.docker.network=proxy_default
-      --providers.docker.watch=true
-      --providers.docker.exposedbydefault=false
-      --api=true
-      --api.insecure=true
-      --entrypoints.web.address=:80
-      --log.level=INFO
     ports:
-      - 80:80  # HTTP port
-      - 8080:8080  # Management web UI
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Traefik dashboard
+    command:
+      - --api.insecure=true  # Dash on port 8080 without auth. See https://docs.traefik.io/v2.0/operations/dashboard/#secure-mode
+      - --api.dashboard=true
+      - --api.debug=false
+      - --log.level=INFO
+      - --providers.docker=true
+      - --providers.docker.swarmmode=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=proxy_default
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure  # Force HTTPS
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.mytlschallenge.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
+      - "--certificatesresolvers.mytlschallenge.acme.email=\"$$(cat /proxy_traefik_email)\""
     volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
+      - /media/cluster/data/certs:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     deploy:
-      placement:
+      placement:                                                                                                                                                                                           
         constraints:
-          - node.role == manager
+          - "node.role==manager"
 
   whoami:
-    # A container that exposes an API to show its IP address
     image: traefik/whoami
+    ports:
+      - "80"
     deploy:
       replicas: 2
       labels:
-        - traefik.enable=true
-        - traefik.http.routers.whoami.rule=Path(`/whoami`)
-        - traefik.http.services.whoami.loadbalancer.server.port=80
+        - "traefik.enable=true"
+        - "traefik.http.routers.whoami-secure.rule=Host(`whoami.humby.co.za`)"
+        - "traefik.http.routers.whoami-secure.entrypoints=websecure"
+        - "traefik.http.routers.whoami-secure.tls.certresolver=mytlschallenge"
+        - "traefik.http.services.whoami.loadbalancer.server.port=80"  # Necessary for docker swarm because autodetect does not work
 

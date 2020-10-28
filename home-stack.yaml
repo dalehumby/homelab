@@ -1,10 +1,10 @@
-version: '3.8'
+version: "3.8"
 services:
 
   mosquitto:
     image: eclipse-mosquitto
     ports:
-      - 1883:1883
+      - "1883:1883"
     volumes:
       - /media/cluster/config/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - /media/cluster/data/mosquitto/:/mosquitto/data
@@ -15,21 +15,21 @@ services:
     deploy:
       mode: global  # Run on each node
     ports:
-      - 9100:9100
+      - "9100:9100"
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--path.rootfs=/rootfs'
-      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --path.rootfs=/rootfs
+      - --collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)
 
   prometheus:
     image: prom/prometheus
     ports:
-      - 9090:9090
+      - "9090:9090"
     volumes:
       - /media/cluster/config/prometheus:/etc/prometheus
       - /media/cluster/data/prometheus/:/prometheus
@@ -38,7 +38,7 @@ services:
     image: grafana/grafana
     user: "0"
     ports:
-      - 3000:3000
+      - "3000:3000"
     env_file:
       - /media/cluster/config/grafana/grafana.env
     volumes:
@@ -48,7 +48,7 @@ services:
   node-red:
     image: nodered/node-red:latest
     ports:
-      - 1880:1880
+      - "1880:1880"
     environment:
       - Africa/Johannesburg
     volumes:
@@ -57,7 +57,7 @@ services:
   homeassistant:
     image: homeassistant/raspberrypi4-homeassistant:stable
     ports:
-      - 8123:8123  # Note some auto-discovery might not work
+      - "8123:8123"  # Note some auto-discovery might not work
     volumes:
       - /media/cluster/data/homeassistant:/config
     networks:
@@ -65,9 +65,11 @@ services:
       - proxy_default
     deploy:
       labels:
-        - traefik.enable=true
-        - traefik.http.routers.homeassistant.rule=Host(`home.humby.co.za`)
-        - traefik.http.services.homeassistant.loadbalancer.server.port=8123
+        - "traefik.enable=true"
+        - "traefik.http.routers.homeassistant-secure.rule=Host(`home.humby.co.za`)"
+        - "traefik.http.routers.homeassistant-secure.entrypoints=websecure"
+        - "traefik.http.routers.homeassistant-secure.tls.certresolver=mytlschallenge"
+        - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
 
   timemachine:
     # Assumes user `timemachine` already exists on the system and is the owner of `/media/tm`
@@ -77,10 +79,10 @@ services:
         constraints:
           - "node.hostname==homepi"  # Only deploy on node with external HDD
     ports:
-      - 137:137/udp
-      - 138:138/udp
-      - 139:139
-      - 445:445
+      - "137:137/udp"
+      - "138:138/udp"
+      - "139:139"
+      - "445:445"
     environment:
       - TM_UID=111
       - TM_GID=115
@@ -90,15 +92,13 @@ services:
   visualizer:
     image: alexellis2/visualizer-arm:latest
     ports:
-      - 8081:8080
+      - "8081:8080"
     deploy:
       placement:
         constraints:
           - "node.role==manager"
     volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
   default: {}
