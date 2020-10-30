@@ -6,7 +6,7 @@ services:
     ports:
       - "1883:1883"
     volumes:
-      - /media/cluster/config/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - /media/cluster/config/mosquitto/:/mosquitto/config/
       - /media/cluster/data/mosquitto/:/mosquitto/data
       - /var/log:/mosquitto/log
 

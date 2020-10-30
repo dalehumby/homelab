@@ -24,6 +24,11 @@
         src: ./mosquitto/mosquitto.conf
         dest: /media/cluster/config/mosquitto/mosquitto.conf
 
+    - name: Copy Mosquitto password file
+      copy:
+        src: ./mosquitto/passwd
+        dest: /media/cluster/config/mosquitto/passwd
+
     # Prometheus
     - name: Create Prometheus data dir
       # See https://stackoverflow.com/questions/50009065/how-to-persist-data-in-prometheus-running-in-a-docker-container
