@@ -36,6 +36,20 @@ services:
       restart_policy:
         condition: none
 
+  prune-nodes:
+    image: docker
+    command: ["docker", "system", "prune", "-f"]
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      mode: global
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=0 0 * * * *"
+        - "swarm.cronjob.skip-running=false"
+      restart_policy:
+        condition: none
+
 secrets:
   cron_ddns_api_key:
     external: true
