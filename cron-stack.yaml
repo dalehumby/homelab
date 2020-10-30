@@ -24,7 +24,7 @@ services:
     command: 
       - ash
       - -cx
-      - "curl https://europe-west2-home-automtn.cloudfunctions.net/update-ip?api_key=\"$$(cat /run/secrets/cron_ddns_api_key)\""
+      - curl https://europe-west2-home-automtn.cloudfunctions.net/update-ip?api_key="$$(cat /run/secrets/cron_ddns_api_key)"
     secrets:
       - cron_ddns_api_key
     deploy:
@@ -36,11 +36,17 @@ services:
       restart_policy:
         condition: none
 
-  prune-nodes:
+  prune:
     image: docker
-    command: ["docker", "system", "prune", "-f"]
+    command: 
+      - docker
+      - system
+      - prune
+      - --force
+      - --all
+      - --filter "until=24h"
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       mode: global
       labels:
