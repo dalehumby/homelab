@@ -63,6 +63,11 @@
         src: ./grafana/grafana.env
         dest: /media/cluster/config/grafana/grafana.env
 
+    - name: Create Grafana log dir
+      file:
+        path: /var/log/grafana
+        state: directory
+
     # Node Red
     - name: Create Node Red data dir
       file:
@@ -74,3 +79,10 @@
       git:
         repo: git@github.com:dalehumby/homeassistant-config.git
         dest: /media/cluster/data/homeassistant
+
+    # Owntracks recorder
+    - name: Create Owntracks Recorder data dir
+      file:
+        path: /media/cluster/data/owntracks
+        state: directory
+
