@@ -44,7 +44,6 @@ services:
       - prune
       - --force
       - --all
-      - --filter "until=24h"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
