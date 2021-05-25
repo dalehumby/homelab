@@ -86,3 +86,8 @@
         path: /media/cluster/data/owntracks
         state: directory
 
+    # Gluster FS
+    - name: Create Gluster log dir
+      file:
+        path: /var/log/glusterfs
+        state: directory

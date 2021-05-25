@@ -63,11 +63,23 @@ services:
       - Africa/Johannesburg
     volumes:
       - /media/cluster/data/node-red:/data
+    networks:
+      - default
+      - proxy_default
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.nodered-secure.rule=Host(`nodered.humby.co.za`)&&PathPrefix(`/webhook`)"
+        - "traefik.http.routers.nodered-secure.entrypoints=websecure"
+        - "traefik.http.routers.nodered-secure.tls.certresolver=mytlschallenge"
+        - "traefik.http.services.nodered.loadbalancer.server.port=1880"
 
   homeassistant:
     image: homeassistant/raspberrypi4-homeassistant:stable
     ports:
       - "8123:8123"  # Note some auto-discovery might not work
+      - "5353:5353/udp"  # Required for Apple HomeKit
+      - "51827:51827"  # Apple HomeKit
     volumes:
       - /media/cluster/data/homeassistant:/config
     networks:
@@ -80,6 +92,22 @@ services:
         - "traefik.http.routers.homeassistant-secure.entrypoints=websecure"
         - "traefik.http.routers.homeassistant-secure.tls.certresolver=mytlschallenge"
         - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
+
+  tasmoadmin:
+    image: raymondmm/tasmoadmin
+    ports:
+      - "8082:80"
+    volumes:
+      - /media/cluster/data/tasmoadmin/:/data
+
+  esphome:
+    image: esphome/esphome
+    ports:
+      - "6052:6052"
+    volumes:
+      - /media/cluster/config/esphome/:/config
+    environment:
+      - ESPHOME_DASHBOARD_USE_PING=true
 
   timemachine:
     # Assumes user `timemachine` already exists on the system and is the owner of `/media/tm`
