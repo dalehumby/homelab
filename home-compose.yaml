@@ -3,6 +3,8 @@
     zigbee2mqtt:
       container_name: zigbee2mqtt
       image: koenkk/zigbee2mqtt
+      ports: 
+        - "8083:8080"
       volumes:
         - /media/cluster/data/zigbee2mqtt/:/app/data
         - /run/udev:/run/udev:ro
