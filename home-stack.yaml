@@ -20,6 +20,13 @@ services:
         - "traefik.tcp.routers.mosquitto-secure.tls.certresolver=mytlschallenge"
         - "traefik.tcp.services.mosquitto.loadbalancer.server.port=1883"
 
+  zigbee2mqtt:
+    image: koenkk/zigbee2mqtt
+    ports: 
+      - "8083:8080"
+    volumes:
+      - /media/cluster/data/zigbee2mqtt/:/app/data
+
   node-exporter:
     image: prom/node-exporter
     deploy:
@@ -113,6 +120,7 @@ services:
     # Assumes user `timemachine` already exists on the system and is the owner of `/media/tm`
     image: mbentley/timemachine:smb-armv7l
     deploy:
+      replicas: 0  # FIXME Dont deploy for now
       placement:
         constraints:
           - "node.hostname==homepi"  # Only deploy on node with external HDD
