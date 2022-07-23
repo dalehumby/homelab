@@ -9,16 +9,6 @@ services:
       - /media/cluster/config/mosquitto/:/mosquitto/config/
       - /media/cluster/data/mosquitto/:/mosquitto/data
       - /var/log:/mosquitto/log
-    networks:
-      - default
-      - proxy_default
-    deploy:
-      labels:
-        - "traefik.enable=true"
-        - "traefik.tcp.routers.mosquitto-secure.rule=HostSNI(`*`)"
-        - "traefik.tcp.routers.mosquitto-secure.entrypoints=mqttsecure"
-        - "traefik.tcp.routers.mosquitto-secure.tls.certresolver=mytlschallenge"
-        - "traefik.tcp.services.mosquitto.loadbalancer.server.port=1883"
 
   zigbee2mqtt:
     image: koenkk/zigbee2mqtt

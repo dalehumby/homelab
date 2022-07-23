@@ -2,12 +2,11 @@ version: "3.8"
 
 services:
   traefik:
-    image: traefik:v2.6
+    image: traefik:v2.8
     ports:
       - "80:80"
       - "443:443"
       - "8080:8080"  # Traefik dashboard
-      - "8883:8883"
     command:
       - --api.insecure=true  # Dash on port 8080 without auth. See https://docs.traefik.io/v2.0/operations/dashboard/#secure-mode
       - --api.dashboard=true
@@ -20,7 +19,6 @@ services:
       - --entrypoints.web.address=:80
       - --entrypoints.web.http.redirections.entrypoint.to=websecure  # Force HTTPS
       - --entrypoints.websecure.address=:443
-      - --entrypoints.mqttsecure.address=:8883
       - --certificatesresolvers.mytlschallenge.acme.httpchallenge.entrypoint=web
       - --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
     volumes:
