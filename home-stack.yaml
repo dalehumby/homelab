@@ -33,25 +33,6 @@ services:
       - --path.rootfs=/rootfs
       - --collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)
 
-  prometheus:
-    image: prom/prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - /media/cluster/config/prometheus:/etc/prometheus
-      - /media/cluster/data/prometheus/:/prometheus
-
-  grafana:
-    image: grafana/grafana
-    user: "0"
-    ports:
-      - "3000:3000"
-    env_file:
-      - /media/cluster/config/grafana/grafana.env
-    volumes:
-      - /media/cluster/data/grafana/:/var/lib/grafana
-      - /var/log/grafana:/var/log/grafana
-
   node-red:
     image: nodered/node-red:latest
     ports:
