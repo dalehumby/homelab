@@ -68,6 +68,8 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.nodered-secure.rule=Host(`nodered.humby.co.za`)&&PathPrefix(`/webhook`)"
         - "traefik.http.routers.nodered-secure.entrypoints=websecure"
+        - "traefik.http.routers.nodered-insecure.rule=Host(`nodered.humby.co.za`)&&PathPrefix(`/spotify/albumart`)"
+        - "traefik.http.routers.nodered-insecure.entrypoints=web"
         - "traefik.http.routers.nodered-secure.tls.certresolver=mytlschallenge"
         - "traefik.http.services.nodered.loadbalancer.server.port=1880"
 

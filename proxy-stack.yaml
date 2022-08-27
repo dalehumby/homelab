@@ -17,13 +17,14 @@ services:
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=proxy_default
       - --entrypoints.web.address=:80
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure  # Force HTTPS
+        #- --entrypoints.web.http.redirections.entrypoint.to=websecure  # Force HTTPS - Dont force because ESPHome+Image cannot handle TLS
       - --entrypoints.websecure.address=:443
       - --certificatesresolvers.mytlschallenge.acme.httpchallenge.entrypoint=web
       - --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
     volumes:
-      - /media/cluster/data/certs:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /media/cluster/data/certs:/letsencrypt
+      - /media/cluster/data/personal-search/passwd:/passwd:ro
     deploy:
       placement:                                                                                                                                                                                           
         constraints:
