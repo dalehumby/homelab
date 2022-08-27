@@ -138,6 +138,27 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
+  shlink:
+    image: shlinkio/shlink:stable
+    ports:
+      - "8084:8080"
+    volumes:
+      - /media/cluster/data/shlink/shlink.sqlite:/etc/shlink/data/database.sqlite
+    environment:
+      - DEFAULT_DOMAIN=dhum.by
+      - IS_HTTPS_ENABLED=true
+      - DEFAULT_SHORT_CODES_LENGTH=4
+      - DEFAULT_BASE_URL_REDIRECT=http://dalehumby.com
+    networks:
+      - proxy_default
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.shlink-secure.rule=Host(`dhum.by`)"
+        - "traefik.http.routers.shlink-secure.entrypoints=websecure"
+        - "traefik.http.routers.shlink-secure.tls.certresolver=mytlschallenge"
+        - "traefik.http.services.shlink.loadbalancer.server.port=8080"  # containers internal port
+
 networks:
   default: {}
   proxy_default:
