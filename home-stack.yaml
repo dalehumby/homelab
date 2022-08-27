@@ -57,7 +57,7 @@ services:
     ports:
       - "1880:1880"
     environment:
-      - Africa/Johannesburg
+      - Europe/Sweden
     volumes:
       - /media/cluster/data/node-red:/data
     networks:
