@@ -6,8 +6,8 @@ services:
     ports:
       - "1883:1883"
     volumes:
-      - /media/cluster/config/mosquitto/:/mosquitto/config/
-      - /media/cluster/data/mosquitto/:/mosquitto/data
+      - /media/cluster/mosquitto/:/mosquitto/config/
+      - /media/cluster/mosquitto/:/mosquitto/data
       - /var/log:/mosquitto/log
 
   zigbee2mqtt:
@@ -15,7 +15,7 @@ services:
     ports: 
       - "8083:8080"
     volumes:
-      - /media/cluster/data/zigbee2mqtt/:/app/data
+      - /media/cluster/zigbee2mqtt/:/app/data
 
   node-exporter:
     image: prom/node-exporter
@@ -40,7 +40,7 @@ services:
     environment:
       - Europe/Sweden
     volumes:
-      - /media/cluster/data/node-red:/data
+      - /media/cluster/node-red:/data
     networks:
       - default
       - proxy_default
@@ -55,13 +55,13 @@ services:
         - "traefik.http.services.nodered.loadbalancer.server.port=1880"
 
   homeassistant:
-    image: homeassistant/raspberrypi4-homeassistant:stable
+    image: homeassistant/home-assistant:stable
     ports:
       - "8123:8123"  # Note some auto-discovery might not work
       - "5353:5353/udp"  # Required for Apple HomeKit
       - "51827:51827"  # Apple HomeKit
     volumes:
-      - /media/cluster/data/homeassistant:/config
+      - /media/cluster/homeassistant:/config
     networks:
       - default
       - proxy_default
@@ -78,14 +78,14 @@ services:
     ports:
       - "8082:80"
     volumes:
-      - /media/cluster/data/tasmoadmin/:/data
+      - /media/cluster/tasmoadmin/:/data
 
   esphome:
     image: esphome/esphome
     ports:
       - "6052:6052"
     volumes:
-      - /media/cluster/config/esphome/:/config
+      - /media/cluster/esphome/:/config
     environment:
       - ESPHOME_DASHBOARD_USE_PING=true
 
@@ -97,6 +97,7 @@ services:
       placement:
         constraints:
           - "node.hostname==homepi"  # Only deploy on node with external HDD
+          - "node.platform.arch==armv7l"
     ports:
       - "137:137/udp"
       - "138:138/udp"
@@ -116,6 +117,7 @@ services:
       placement:
         constraints:
           - "node.role==manager"
+          - "node.platform.arch==armv7l"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
@@ -124,7 +126,7 @@ services:
     ports:
       - "8084:8080"
     volumes:
-      - /media/cluster/data/shlink/shlink.sqlite:/etc/shlink/data/database.sqlite
+      - /media/cluster/shlink/shlink.sqlite:/etc/shlink/data/database.sqlite
     environment:
       - DEFAULT_DOMAIN=dhum.by
       - IS_HTTPS_ENABLED=true

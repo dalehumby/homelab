@@ -23,8 +23,8 @@ services:
       - --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /media/cluster/data/certs:/letsencrypt
-      - /media/cluster/data/personal-search/passwd:/passwd:ro
+      - /media/cluster/certs:/letsencrypt
+      - /media/cluster/personal-search/passwd:/passwd:ro
     deploy:
       placement:                                                                                                                                                                                           
         constraints:
@@ -33,9 +33,9 @@ services:
   whoami:
     image: traefik/whoami
     ports:
-      - "80"
+      - "30000:80"
     deploy:
-      replicas: 2
+      mode: global
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.whoami-secure.rule=Host(`whoami.humby.co.za`)"

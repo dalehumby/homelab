@@ -20,7 +20,7 @@ services:
 
   ddns:
     # Dynamic DNS
-    image: jaedle/alpine-curl-jq-arm32v7
+    image: pascaliske/alpine-curl-jq
     command: 
       - ash
       - -cx
