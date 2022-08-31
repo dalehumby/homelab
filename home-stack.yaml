@@ -142,6 +142,35 @@ services:
         - "traefik.http.routers.shlink-secure.tls.certresolver=mytlschallenge"
         - "traefik.http.services.shlink.loadbalancer.server.port=8080"  # containers internal port
 
+  rhasspy:
+    image: rhasspy/rhasspy:latest
+    ports:
+        - "12101:12101"
+    volumes:
+        - /media/cluster/rhasspy/:/profiles
+        - /etc/localtime:/etc/localtime:ro
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname==homedell"
+    command:
+      - --user-profiles=/profiles
+      - --profile=en
+
+  opentts:
+    image: synesthesiam/opentts:en
+    ports:
+      - 5500:5500
+    volumes:
+      - /media/cluster/opentts/cache:/cache
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname==homedell"
+    command:
+      - --no-espeak
+      - --cache=/cache
+
 networks:
   default: {}
   proxy_default:
