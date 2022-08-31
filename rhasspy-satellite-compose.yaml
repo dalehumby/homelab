@@ -1,15 +1,36 @@
 version: "3.9"
 
+# To get audio from rhasspy and raspotify to play simultaneously
+# requires asound profile to be mounted where the default device is dmix
+# and priveledged and access to host IPC
+
 services:
   rhasspy:
     image: "rhasspy/rhasspy"
     container_name: rhasspy
     restart: unless-stopped
+    privileged: true
+    ipc: host
     volumes:
         - "$HOME/rhasspy/:/profiles"
+        - "$HOME/.asoundrc:/etc/asound.conf"
         - "/etc/localtime:/etc/localtime:ro"
     ports:
         - "12101:12101"
     devices:
         - "/dev/snd:/dev/snd"
     command: --user-profiles /profiles --profile en
+
+  raspotify:
+    image: "piotrb/raspotify-docker"
+    container_name: raspotify
+    restart: unless-stopped
+    network_mode: host
+    privileged: true
+    ipc: host
+    volumes:
+      - "$HOME/.asoundrc:/etc/asound.conf"
+    devices:
+      - "/dev/snd:/dev/snd"
+    environment:
+      - "DEVICE_NAME=raspotify"
