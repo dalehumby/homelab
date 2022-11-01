@@ -157,19 +157,22 @@ services:
       - --user-profiles=/profiles
       - --profile=en
 
-  opentts:
-    image: synesthesiam/opentts:en
+  mimic3:
+    image: mycroftai/mimic3
     ports:
-      - 5500:5500
+      - 59125:59125
     volumes:
-      - /media/cluster/opentts/cache:/cache
+      - /media/cluster/mimic3:/home/mimic3/.local/share/mycroft/mimic3
     deploy:
       placement:
         constraints:
           - "node.hostname==homedell"
     command:
-      - --no-espeak
-      - --cache=/cache
+      - --default-voice=en_US/ljspeech_low
+      - --noise-w=0.8
+      - --noise-scale=0.667
+      - --length-scale=1
+
 
 networks:
   default: {}
