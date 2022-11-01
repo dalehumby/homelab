@@ -173,6 +173,17 @@ services:
       - --noise-scale=0.667
       - --length-scale=1
 
+  whisper:
+    image: tiemajor/whisper-rhasspy-http
+    ports:
+      - 4444:4444
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname==homedell"
+    command:
+      - --whisper-model=tiny
+      - --filter-chars=".?'"\!\"":;<>[]{}()%"
 
 networks:
   default: {}
