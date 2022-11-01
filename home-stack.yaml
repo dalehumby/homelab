@@ -185,6 +185,19 @@ services:
       - --whisper-model=tiny
       - --filter-chars=".?'"\!\"":;<>[]{}()%"
 
+  firefox:
+    image: jlesage/firefox
+    ports:
+      - 5800:5800  # Browser
+      - 5900:5900  # VNC
+    volumes:
+      - /media/cluster/firefox:/config
+    environment:
+      - DISPLAY_WIDTH=2048
+      - DISPLAY_HEIGHT=1536
+    # Shared memory is default 64 MB but should be 2G according to the repo
+    # If need to set this up on Docker Swarm see https://github.com/moby/moby/issues/26714
+
 networks:
   default: {}
   proxy_default:
