@@ -1,7 +1,7 @@
 # Homelab Provisioning
-Use Docker Swarm to manage deployments. 
+Use Docker Swarm (and less ideally, Docker Compose) to manage deployments. 
 
-## Steps to perform before running the Ansible Playbook
+## Steps to perform when installing a new server
 - On a clean Ubuntu server
 - `apt update`
 - `apt upgrade`
@@ -10,12 +10,12 @@ Use Docker Swarm to manage deployments.
 - `cd homelab`
 
 ## Directory layout
-Containers assume that all files are available on a mount `/media/cluster`. Each service has its own sub-directory in the cluster directory.
+Containers assume that all files are available on a mount `/media/cluster`. Each service has its own sub-directory in the cluster directory. (TODO describe network mount / glusterfs)
 
 ## Docker Swarm
-I am running 2x [Raspberry Pi 4B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) with 4 GB RAM and 32 GB Micro SD card in [Docker Swarm mode](https://docs.docker.com/engine/swarm/), and a Dell x86 server with 32 GB RAM. 
+I am running 2x [Raspberry Pi 4B](https:///www.raspberrypi.org/products/raspberry-pi-4-model-b/) with 4 GB RAM and 32 GB Micro SD card in [Docker Swarm mode](https://docs.docker.com/engine/swarm/), and a Dell x86 server with 24 GB RAM. 
 
-There are several Stacks (Docker Compose files) that define various services:
+There are several Stacks that define various services:
 - `home-stack.yaml`: IoT and home automation services
 - `proxy-stack.yaml`: Run Traefik proxy server, including SSL termination, so can access services from the internet
 - `cron-stack.yaml`: Launch periodic jobs like updating DNS (dynamic DNS)
@@ -28,3 +28,10 @@ This creates a `home_default` network and each service is prefixed with `home_` 
 `docker service ls` to see which services are running.
 
 Use [secrets](https://docs.docker.com/engine/swarm/secrets/) and [configs](https://docs.docker.com/engine/swarm/configs/) so I don't have to commit sensitive info to repo.
+
+## Docker Compose
+Swarm cannot pass through USB devices like SDR dongles, and anyway the container needs to run on the host where the USB device is plugged in.
+
+- `compose.yaml`: Containers that run on the primary host (Dell)
+
+To deploy the services: `docker compose up -d`
