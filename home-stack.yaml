@@ -187,6 +187,13 @@ services:
       - --whisper-model=tiny
       - --filter-chars=".?'"\!\"":;<>[]{}()%"
 
+  openwakeword:
+    image: dalehumby/openwakeword-rhasspy
+    ports:
+      - "12202:12202/udp"
+    volumes:
+      - /media/cluster/openwakeword:/config
+
   firefox:
     image: jlesage/firefox
     ports:
