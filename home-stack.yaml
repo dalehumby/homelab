@@ -16,6 +16,8 @@ services:
       - "8083:8080"
     volumes:
       - /media/cluster/zigbee2mqtt/:/app/data
+    environment:
+      - DEBUG=zigbee-herdsman*
 
   node-exporter:
     image: prom/node-exporter
