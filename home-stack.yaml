@@ -1,4 +1,5 @@
 version: "3.8"
+
 services:
 
   mosquitto:
@@ -18,22 +19,6 @@ services:
       - /media/cluster/zigbee2mqtt/:/app/data
     environment:
       - DEBUG=zigbee-herdsman*
-
-  node-exporter:
-    image: prom/node-exporter
-    deploy:
-      mode: global  # Run on each node
-    ports:
-      - "9100:9100"
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command:
-      - --path.procfs=/host/proc
-      - --path.sysfs=/host/sys
-      - --path.rootfs=/rootfs
-      - --collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)
 
   node-red:
     image: nodered/node-red:latest
@@ -91,38 +76,6 @@ services:
     environment:
       - ESPHOME_DASHBOARD_USE_PING=true
 
-  timemachine:
-    # Assumes user `timemachine` already exists on the system and is the owner of `/media/tm`
-    image: mbentley/timemachine:smb-armv7l
-    deploy:
-      replicas: 0  # FIXME Dont deploy for now
-      placement:
-        constraints:
-          - "node.hostname==homepi"  # Only deploy on node with external HDD
-          - "node.platform.arch==armv7l"
-    ports:
-      - "137:137/udp"
-      - "138:138/udp"
-      - "139:139"
-      - "445:445"
-    environment:
-      - TM_UID=111
-      - TM_GID=115
-    volumes:
-      - /media/tm:/opt/timemachine
-
-  visualizer:
-    image: alexellis2/visualizer-arm:latest
-    ports:
-      - "8081:8080"
-    deploy:
-      placement:
-        constraints:
-          - "node.role==manager"
-          - "node.platform.arch==armv7l"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
   shlink:
     image: shlinkio/shlink:stable
     ports:
@@ -175,37 +128,12 @@ services:
       - --noise-scale=0.667
       - --length-scale=1
 
-  whisper:
-    image: tiemajor/whisper-rhasspy-http
-    ports:
-      - 4444:4444
-    deploy:
-      placement:
-        constraints:
-          - "node.hostname==homedell"
-    command:
-      - --whisper-model=tiny
-      - --filter-chars=".?'"\!\"":;<>[]{}()%"
-
   openwakeword:
     image: dalehumby/openwakeword-rhasspy
     ports:
       - "12202:12202/udp"
     volumes:
       - /media/cluster/openwakeword:/config
-
-  firefox:
-    image: jlesage/firefox
-    ports:
-      - 5800:5800  # Browser
-      - 5900:5900  # VNC
-    volumes:
-      - /media/cluster/firefox:/config
-    environment:
-      - DISPLAY_WIDTH=2048
-      - DISPLAY_HEIGHT=1536
-    # Shared memory is default 64 MB but should be 2G according to the repo
-    # If need to set this up on Docker Swarm see https://github.com/moby/moby/issues/26714
 
 networks:
   default: {}

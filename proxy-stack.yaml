@@ -30,15 +30,3 @@ services:
         constraints:
           - "node.role==manager"
 
-  whoami:
-    image: traefik/whoami
-    ports:
-      - "30000:80"
-    deploy:
-      mode: global
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.whoami-secure.rule=Host(`whoami.humby.co.za`)"
-        - "traefik.http.routers.whoami-secure.entrypoints=websecure"
-        - "traefik.http.routers.whoami-secure.tls.certresolver=mytlschallenge"
-        - "traefik.http.services.whoami.loadbalancer.server.port=80"  # Necessary for docker swarm because autodetect does not work
