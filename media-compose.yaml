@@ -1,0 +1,65 @@
+services:
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin
+    restart: unless-stopped
+    ports:
+      - "8096:8096"
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - /media/cluster/jellyfin:/config
+      - /media/jellyfin-cache:/cache
+      - /media/ssd/videos/movies:/data/movies
+      - /media/ssd/videos/tvshows:/data/tvshows
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Stockholm
+    healthcheck:
+      test: curl --fail -s http://localhost:8096/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    restart: unless-stopped
+    ports:
+      - "8085:8080"
+    volumes:
+      - /media/cluster/sabnzbd:/config
+      - /media/ssd/videos/downloads:/downloads
+      - /media/ssd/videos/incomplete-downloads:/incomplete-downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Stockholm
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    restart: unless-stopped
+    ports:
+      - "8086:7878"
+    volumes:
+      - /media/cluster/radarr:/config
+      - /media/ssd/videos/movies:/movies  # jellyfin movies folder
+      - /media/ssd/videos/downloads:/downloads  # sabnzbd download folder
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Stockholm
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    restart: unless-stopped
+    ports:
+      - "8087:8989"
+    volumes:
+      - /media/cluster/sonarr:/config
+      - /media/ssd/videos/tvshows:/tv  # jellyfin tvshows folder
+      - /media/ssd/videos/downloads:/downloads  # sabnzbd download folder
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Stockholm
