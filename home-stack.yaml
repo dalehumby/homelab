@@ -97,6 +97,13 @@ services:
         - "traefik.http.routers.shlink-secure.tls.certresolver=mytlschallenge"
         - "traefik.http.services.shlink.loadbalancer.server.port=8080"  # containers internal port
 
+  homepage:
+    image: ghcr.io/benphelps/homepage:latest
+    ports:
+      - "8081:3000"
+    volumes:
+      - /media/cluster/homepage:/app/config
+
   rhasspy:
     image: rhasspy/rhasspy:latest
     ports:
