@@ -16,9 +16,9 @@ Containers assume that all files are available on a mount `/media/cluster`. Each
 I am running 2x [Raspberry Pi 4B](https:///www.raspberrypi.org/products/raspberry-pi-4-model-b/) with 4 GB RAM and 32 GB Micro SD card in [Docker Swarm mode](https://docs.docker.com/engine/swarm/), and a Dell x86 server with 24 GB RAM. 
 
 There are several Stacks that define various services:
-- `home-stack.yaml`: IoT and home automation services
-- `proxy-stack.yaml`: Run Traefik proxy server, including SSL termination, so can access services from the internet
-- `cron-stack.yaml`: Launch periodic jobs like updating DNS (dynamic DNS)
+- [`home-stack.yaml`](home-stack.yaml): IoT and home automation services
+- [`proxy-stack.yaml`](proxy-stack.yaml): Run Traefik proxy server, including SSL termination, so can access services from the internet
+- [`cron-stack.yaml`](cron-stack.yaml): Launch periodic jobs like updating DNS (dynamic DNS)
 
 ### Deploy a stack
 For example, the IoT "home" services: `docker stack deploy -c home-stack.yaml home`
@@ -30,8 +30,9 @@ This creates a `home_default` network and each service is prefixed with `home_` 
 Use [secrets](https://docs.docker.com/engine/swarm/secrets/) and [configs](https://docs.docker.com/engine/swarm/configs/) so I don't have to commit sensitive info to repo.
 
 ## Docker Compose
-Swarm cannot pass through USB devices like SDR dongles, and anyway the container needs to run on the host where the USB device is plugged in.
+Swarm cannot pass through devices (like GPU or USB SDR dongles), and anyway the container needs to run on the host where the device is.
 
 - `compose.yaml`: Containers that run on the primary host (Dell)
+- [`media-compose.yaml`](media-compose.yaml): Media server and download management
 
-To deploy the services: `docker compose up -d`
+To deploy the services: `docker compose up -d` or `docker compose -f media-compose.yaml up -d`
