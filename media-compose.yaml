@@ -11,7 +11,7 @@ services:
       - /media/cluster/jellyfin:/config
       - /media/jellyfin-cache:/cache
       - /media/ssd/videos/movies:/data/movies
-      - /media/ssd/videos/tvshows:/data/tvshows
+      - /mnt/ugreen/tvshows:/data/tvshows
     environment:
       - PUID=1000
       - PGID=1000
@@ -57,8 +57,34 @@ services:
       - "8087:8989"
     volumes:
       - /media/cluster/sonarr:/config
-      - /media/ssd/videos/tvshows:/tv  # jellyfin tvshows folder
+      - /mnt/ugreen/tvshows:/tv  # jellyfin tvshows folder
       - /media/ssd/videos/downloads:/downloads  # sabnzbd download folder
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Stockholm
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    restart: unless-stopped
+    ports:
+      - "9696:9696"
+    volumes:
+      - /media/cluster/prowlarr:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Stockholm
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    restart: unless-stopped
+    ports:
+      - "6767:6767"
+    volumes:
+      - /media/cluster/bazarr:/config
+      - /media/ssd/videos/movies:/movies
+      - /mnt/ugreen/tvshows:/tv
     environment:
       - PUID=1000
       - PGID=1000
