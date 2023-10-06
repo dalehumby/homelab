@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   traefik:
-    image: traefik:v2.9
+    image: traefik:v2.10
     ports:
       - "80:80"
       - "443:443"
@@ -16,6 +16,8 @@ services:
       - --providers.docker.swarmmode=true
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=proxy_default
+      - --providers.file.filename=/config/dynamic_conf.yml
+      - --providers.file.watch=true
       - --entrypoints.web.address=:80
       - --entrypoints.web.http.redirections.entrypoint.to=websecure  # Force HTTPS
       - --entrypoints.websecure.address=:443
@@ -25,6 +27,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /media/cluster/certs:/letsencrypt
       - /media/cluster/personal-search/passwd:/passwd:ro
+      - /media/cluster/traefik:/config
     deploy:
       placement:                                                                                                                                                                                           
         constraints:
