@@ -4,8 +4,16 @@ services:
   traefik:
     image: traefik:v2.10
     ports:
-      - "80:80"
-      - "443:443"
+      # Host mode for 80, 443 so that we get external IP addresses in X-Real-Ip header
+      # https://stackoverflow.com/questions/49415595/docker-swarm-get-real-ip-client-host-in-nginx
+      - mode: host
+        protocol: tcp
+        published: 80
+        target: 80
+      - mode: host
+        protocol: tcp
+        published: 443
+        target: 443
       - "8080:8080"  # Traefik dashboard
     command:
       - --api.insecure=true  # Dash on port 8080 without auth. See https://docs.traefik.io/v2.0/operations/dashboard/#secure-mode
@@ -23,13 +31,35 @@ services:
       - --entrypoints.websecure.address=:443
       - --certificatesresolvers.mytlschallenge.acme.httpchallenge.entrypoint=web
       - --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
+      - --accesslog=true
+      - --accesslog.filepath=/logs/traefik.log
+      - --accesslog.format=json
+      - --accesslog.bufferingsize=0
+      - --accesslog.filters.statuscodes=400-599
+      - --accesslog.fields.headers.defaultmode=keep
+    environment:
+      - TZ=Europe/Stockholm
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /media/cluster/certs:/letsencrypt
       - /media/cluster/personal-search/passwd:/passwd:ro
       - /media/cluster/traefik:/config
+      - /media/cluster/traefik/logs:/logs
     deploy:
       placement:                                                                                                                                                                                           
         constraints:
           - "node.role==manager"
+
+  fail2ban:
+    image: crazymax/fail2ban
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      - TZ=Europe/Stockholm
+      - F2B_DB_PURGE_AGE=14d
+    volumes:
+      - /media/cluster/fail2ban:/data
+      - /media/cluster/traefik/logs/:/var/log/traefik:ro
+      - /root/.ssh:/root/.ssh:ro
 
