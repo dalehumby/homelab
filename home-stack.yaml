@@ -142,6 +142,19 @@ services:
     volumes:
       - /media/cluster/openwakeword:/config
 
+  syslog:
+    image: lscr.io/linuxserver/syslog-ng:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Stockholm
+    volumes:
+      - /media/cluster/syslog:/config
+      - /media/cluster/syslog/log:/var/log
+    ports:
+      - 514:5514/udp
+      - 601:6601/tcp
+
 networks:
   default: {}
   proxy_default:

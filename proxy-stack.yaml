@@ -59,7 +59,8 @@ services:
       - TZ=Europe/Stockholm
       - F2B_DB_PURGE_AGE=14d
     volumes:
+      - /root/.ssh:/root/.ssh:ro
       - /media/cluster/fail2ban:/data
       - /media/cluster/traefik/logs/:/var/log/traefik:ro
-      - /root/.ssh:/root/.ssh:ro
+      - /media/cluster/syslog/log/:/var/log/mikrotik:ro
 
