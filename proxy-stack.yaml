@@ -35,7 +35,7 @@ services:
       - --accesslog.filepath=/logs/traefik.log
       - --accesslog.format=json
       - --accesslog.bufferingsize=0
-      - --accesslog.filters.statuscodes=400-599
+      - --accesslog.filters.statuscodes=400-498
       - --accesslog.fields.headers.defaultmode=keep
     environment:
       - TZ=Europe/Stockholm
@@ -46,7 +46,7 @@ services:
       - /media/cluster/traefik:/config
       - /media/cluster/traefik/logs:/logs
     deploy:
-      placement:                                                                                                                                                                                           
+      placement:
         constraints:
           - "node.role==manager"
 
@@ -63,4 +63,4 @@ services:
       - /media/cluster/fail2ban:/data
       - /media/cluster/traefik/logs/:/var/log/traefik:ro
       - /media/cluster/syslog/log/:/var/log/mikrotik:ro
-
+      - /media/cluster/homeassistant/home-assistant.log:/var/log/homeassistant/home-assistant.log:ro

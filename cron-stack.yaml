@@ -21,7 +21,7 @@ services:
   ddns:
     # Dynamic DNS
     image: pascaliske/alpine-curl-jq
-    command: 
+    command:
       - ash
       - -cx
       - curl https://europe-west2-home-automtn.cloudfunctions.net/update-ip?api_key="$$(cat /run/secrets/cron_ddns_api_key)"
@@ -38,7 +38,7 @@ services:
 
   prune:
     image: docker
-    command: 
+    command:
       - docker
       - system
       - prune

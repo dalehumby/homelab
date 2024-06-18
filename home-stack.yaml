@@ -11,15 +11,6 @@ services:
       - /media/cluster/mosquitto/:/mosquitto/data
       - /var/log:/mosquitto/log
 
-  zigbee2mqtt:
-    image: koenkk/zigbee2mqtt
-    ports: 
-      - "8083:8080"
-    volumes:
-      - /media/cluster/zigbee2mqtt/:/app/data
-    environment:
-      - DEBUG=zigbee-herdsman*
-
   node-red:
     image: nodered/node-red:latest
     ports:
@@ -44,9 +35,19 @@ services:
   homeassistant:
     image: homeassistant/home-assistant:stable
     ports:
-      - "8123:8123"  # Note some auto-discovery might not work
-      - "5353:5353/udp"  # Required for Apple HomeKit
-      - "51827:51827"  # Apple HomeKit
+      - "8123:8123"
+      - mode: host
+        protocol: udp
+        published: 5353
+        target: 5353
+      - mode: host
+        protocol: tcp
+        published: 5353
+        target: 5353
+      - "5683:5683/udp"  # Shelly CoIoT https://www.home-assistant.io/integrations/shelly/#shelly-device-configuration-generation-1
+      #- "5353:5353/udp"  # Apple HomeKit
+      #- "51827:51827"  # Apple HomeKit
+      #- "21063:21063"  # Apple HomeKit
     volumes:
       - /media/cluster/homeassistant:/config
     networks:
@@ -98,7 +99,7 @@ services:
         - "traefik.http.services.shlink.loadbalancer.server.port=8080"  # containers internal port
 
   homepage:
-    image: ghcr.io/benphelps/homepage:latest
+    image: ghcr.io/gethomepage/homepage:latest
     ports:
       - "8081:3000"
     volumes:
@@ -107,10 +108,10 @@ services:
   rhasspy:
     image: rhasspy/rhasspy:latest
     ports:
-        - "12101:12101"
+      - "12101:12101"
     volumes:
-        - /media/cluster/rhasspy/:/profiles
-        - /etc/localtime:/etc/localtime:ro
+      - /media/cluster/rhasspy/:/profiles
+      - /etc/localtime:/etc/localtime:ro
     deploy:
       placement:
         constraints:
@@ -159,4 +160,3 @@ networks:
   default: {}
   proxy_default:
     external: true
-
