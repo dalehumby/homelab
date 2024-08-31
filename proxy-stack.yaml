@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   traefik:
-    image: traefik:v2.10
+    image: traefik:v2.11
     ports:
       # Host mode for 80, 443 so that we get external IP addresses in X-Real-Ip header
       # https://stackoverflow.com/questions/49415595/docker-swarm-get-real-ip-client-host-in-nginx
