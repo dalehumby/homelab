@@ -36,6 +36,7 @@ services:
     image: homeassistant/home-assistant:stable
     ports:
       - "8123:8123"
+      # Apple HomeKit
       - mode: host
         protocol: udp
         published: 5353
@@ -44,8 +45,11 @@ services:
         protocol: tcp
         published: 5353
         target: 5353
-      - "5683:5683/udp"  # Shelly CoIoT https://www.home-assistant.io/integrations/shelly/#shelly-device-configuration-generation-1
-      #- "5353:5353/udp"  # Apple HomeKit
+      # Shelly CoIoT https://www.home-assistant.io/integrations/shelly/#shelly-device-configuration-generation-1
+      - mode: host
+        protocol: udp
+        published: 5683
+        target: 5683
       #- "51827:51827"  # Apple HomeKit
       #- "21063:21063"  # Apple HomeKit
     volumes:
