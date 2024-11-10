@@ -63,13 +63,6 @@ services:
         - "traefik.http.routers.homeassistant-secure.tls.certresolver=mytlschallenge"
         - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
 
-  tasmoadmin:
-    image: raymondmm/tasmoadmin
-    ports:
-      - "8082:80"
-    volumes:
-      - /media/cluster/tasmoadmin/:/data
-
   esphome:
     image: esphome/esphome
     ports:
@@ -79,71 +72,12 @@ services:
     environment:
       - ESPHOME_DASHBOARD_USE_PING=true
 
-  shlink:
-    image: shlinkio/shlink:stable
-    ports:
-      - "8084:8080"
-    volumes:
-      - /media/cluster/shlink/shlink.sqlite:/etc/shlink/data/database.sqlite
-    environment:
-      - DEFAULT_DOMAIN=dhum.by
-      - IS_HTTPS_ENABLED=true
-      - DEFAULT_SHORT_CODES_LENGTH=4
-      - DEFAULT_BASE_URL_REDIRECT=http://dalehumby.com
-    networks:
-      - proxy_default
-    deploy:
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.shlink-secure.rule=Host(`dhum.by`)"
-        - "traefik.http.routers.shlink-secure.entrypoints=websecure"
-        - "traefik.http.routers.shlink-secure.tls.certresolver=mytlschallenge"
-        - "traefik.http.services.shlink.loadbalancer.server.port=8080"  # containers internal port
-
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     ports:
       - "8081:3000"
     volumes:
       - /media/cluster/homepage:/app/config
-
-  rhasspy:
-    image: rhasspy/rhasspy:latest
-    ports:
-      - "12101:12101"
-    volumes:
-      - /media/cluster/rhasspy/:/profiles
-      - /etc/localtime:/etc/localtime:ro
-    deploy:
-      placement:
-        constraints:
-          - "node.hostname==homedell"
-    command:
-      - --user-profiles=/profiles
-      - --profile=en
-
-  mimic3:
-    image: mycroftai/mimic3
-    ports:
-      - 59125:59125
-    volumes:
-      - /media/cluster/mimic3:/home/mimic3/.local/share/mycroft/mimic3
-    deploy:
-      placement:
-        constraints:
-          - "node.hostname==homedell"
-    command:
-      - --default-voice=en_US/ljspeech_low
-      - --noise-w=0.8
-      - --noise-scale=0.667
-      - --length-scale=1
-
-  openwakeword:
-    image: dalehumby/openwakeword-rhasspy
-    ports:
-      - "12202:12202/udp"
-    volumes:
-      - /media/cluster/openwakeword:/config
 
   syslog:
     image: lscr.io/linuxserver/syslog-ng:latest
