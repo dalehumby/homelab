@@ -76,6 +76,8 @@ services:
     image: ghcr.io/gethomepage/homepage:latest
     ports:
       - "8081:3000"
+    environment:
+      - HOMEPAGE_ALLOWED_HOSTS=10.0.0.10:8081
     volumes:
       - /media/cluster/homepage:/app/config
 
