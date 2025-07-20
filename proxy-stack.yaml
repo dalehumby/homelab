@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   traefik:
-    image: traefik:v2.11
+    image: traefik:v3.4
     ports:
       # Host mode for 80, 443 so that we get external IP addresses in X-Real-Ip header
       # https://stackoverflow.com/questions/49415595/docker-swarm-get-real-ip-client-host-in-nginx
@@ -18,25 +18,28 @@ services:
     command:
       - --api.insecure=true  # Dash on port 8080 without auth. See https://docs.traefik.io/v2.0/operations/dashboard/#secure-mode
       - --api.dashboard=true
-      - --api.debug=false
+      # Log
       - --log.level=INFO
-      - --providers.docker=true
-      - --providers.docker.swarmmode=true
-      - --providers.docker.exposedbydefault=false
-      - --providers.docker.network=proxy_default
-      - --providers.file.filename=/config/dynamic_conf.yml
-      - --providers.file.watch=true
-      - --entrypoints.web.address=:80
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure  # Force HTTPS
-      - --entrypoints.websecure.address=:443
-      - --certificatesresolvers.mytlschallenge.acme.httpchallenge.entrypoint=web
-      - --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
       - --accesslog=true
       - --accesslog.filepath=/logs/traefik.log
       - --accesslog.format=json
       - --accesslog.bufferingsize=0
       - --accesslog.filters.statuscodes=400-498
       - --accesslog.fields.headers.defaultmode=keep
+      # Provider
+      - --providers.swarm=true
+      - --providers.swarm.endpoint=unix:///var/run/docker.sock
+      - --providers.swarm.exposedbydefault=false
+      - --providers.swarm.network=proxy_default
+      - --providers.file.filename=/config/dynamic_conf.yml
+      - --providers.file.watch=true
+      # Entrypoints
+      - --entrypoints.web.address=:80
+      - --entryPoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      # Cert resolver
+      - --certificatesresolvers.mytlschallenge.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
     environment:
       - TZ=Europe/Stockholm
     volumes:
@@ -49,6 +52,8 @@ services:
       placement:
         constraints:
           - "node.role==manager"
+      labels:
+        - "traefik.enable=false"
 
   fail2ban:
     image: crazymax/fail2ban
@@ -64,3 +69,6 @@ services:
       - /media/cluster/traefik/logs/:/var/log/traefik:ro
       - /media/cluster/syslog/log/:/var/log/mikrotik:ro
       - /media/cluster/homeassistant/home-assistant.log:/var/log/homeassistant/home-assistant.log:ro
+    deploy:
+      labels:
+        - "traefik.enable=false"

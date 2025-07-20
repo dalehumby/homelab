@@ -17,6 +17,8 @@ services:
       placement:
         constraints:
           - "node.role==manager"
+      labels:
+        - "traefik.enable=false"
 
   ddns:
     # Dynamic DNS
@@ -30,6 +32,7 @@ services:
     deploy:
       replicas: 0
       labels:
+        - "traefik.enable=false"
         - "swarm.cronjob.enable=true"
         - "swarm.cronjob.schedule=*/5 * * * *"
         - "swarm.cronjob.skip-running=false"
@@ -49,6 +52,7 @@ services:
     deploy:
       mode: global
       labels:
+        - "traefik.enable=false"
         - "swarm.cronjob.enable=true"
         - "swarm.cronjob.schedule=0 0 * * 0"
         - "swarm.cronjob.skip-running=false"

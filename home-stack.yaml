@@ -10,13 +10,16 @@ services:
       - /media/cluster/mosquitto/:/mosquitto/config/
       - /media/cluster/mosquitto/:/mosquitto/data
       - /var/log:/mosquitto/log
+    deploy:
+      labels:
+        - "traefik.enable=false"
 
   node-red:
     image: nodered/node-red:latest
     ports:
       - "1880:1880"
     environment:
-      - Europe/Sweden
+      - TZ=Europe/Stockholm
     volumes:
       - /media/cluster/node-red:/data
     networks:
@@ -25,11 +28,13 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.nodered-secure.rule=Host(`nodered.humby.co.za`)&&PathPrefix(`/webhook`)"
+        - "traefik.http.routers.nodered-secure.rule=Host(`nodered.humby.co.za`) && PathPrefix(`/webhook`)"
         - "traefik.http.routers.nodered-secure.entrypoints=websecure"
-        - "traefik.http.routers.nodered-insecure.rule=Host(`nodered.humby.co.za`)&&PathPrefix(`/spotify/albumart`)"
-        - "traefik.http.routers.nodered-insecure.entrypoints=web"
         - "traefik.http.routers.nodered-secure.tls.certresolver=mytlschallenge"
+        - "traefik.http.routers.nodered-secure.service=nodered"
+        - "traefik.http.routers.nodered-insecure.rule=Host(`nodered.humby.co.za`) && PathPrefix(`/spotify/albumart`)"
+        - "traefik.http.routers.nodered-insecure.entrypoints=web"
+        - "traefik.http.routers.nodered-insecure.service=nodered"
         - "traefik.http.services.nodered.loadbalancer.server.port=1880"
 
   homeassistant:
@@ -61,6 +66,7 @@ services:
         - "traefik.http.routers.homeassistant-secure.rule=Host(`home.humby.co.za`)"
         - "traefik.http.routers.homeassistant-secure.entrypoints=websecure"
         - "traefik.http.routers.homeassistant-secure.tls.certresolver=mytlschallenge"
+        - "traefik.http.routers.homeassistant-secure.service=homeassistant"
         - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
 
   esphome:
@@ -71,6 +77,9 @@ services:
       - /media/cluster/esphome/:/config
     environment:
       - ESPHOME_DASHBOARD_USE_PING=true
+    deploy:
+      labels:
+        - "traefik.enable=false"
 
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
@@ -80,6 +89,9 @@ services:
       - HOMEPAGE_ALLOWED_HOSTS=10.0.0.10:8081
     volumes:
       - /media/cluster/homepage:/app/config
+    deploy:
+      labels:
+        - "traefik.enable=false"
 
   syslog:
     image: lscr.io/linuxserver/syslog-ng:latest
