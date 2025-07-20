@@ -1,0 +1,62 @@
+services:
+
+  piaware:
+    image: mikenye/piaware
+    restart: unless-stopped
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    ports:
+      - 8090:80
+    environment:
+      - LAT=${LAT}
+      - LONG=${LONG}
+      - FEEDER_ID=${FEEDER_ID}
+      - RECEIVER_TYPE=rtlsdr
+
+  zigbee2mqtt:
+    image: koenkk/zigbee2mqtt
+    restart: unless-stopped
+    devices:
+      - /dev/serial/by-id/usb-Silicon_Labs_slae.sh_cc2652rb_stick_-_slaesh_s_iot_stuff_00_12_4B_00_25_9B_C1_B2-if00-port0:/dev/ttyUSB0
+    ports:
+      - "8083:8080"
+    volumes:
+      - /media/cluster/zigbee2mqtt/:/app/data
+    environment:
+      - DEBUG=zigbee-herdsman*
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://127.0.0.1:8080 || exit 1"
+      start_period: 30s
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+# Decided I don't actually want auto-update
+#  watchtower:
+#    image: containrrr/watchtower
+#    restart: unless-stopped
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    environment:
+#      - TZ=Europe/Stockholm
+#      - WATCHTOWER_CLEANUP=true
+
+#  Snapswerver ate all of my drive space .. 46 GB in 6 days
+#  snapserver:
+#    image: leakypixel/snapserver
+#    restart: unless-stopped
+#    network_mode: host
+#    ports:
+#      - 1704:1704
+#      - 1705:1705
+#      - 1780:1780 # HTTP JSON RPC
+#      - 5000:5000 # Shairport control
+#      - 6000-6010:6000-6010/udp # Shairport data
+#    environment:
+#      - DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket # For avahi publishing
+#    volumes:
+#      - /tmp/snapfifo:/tmp/snapfifo
+#      - $HOME/homelab/snapserver.conf:/etc/snapserver.conf
+#      - $HOME/homelab/data/:/var/lib/snapserver
+#        ##- $HOME/homelab/shairport-sync.conf:/usr/local/etc/shairport-sync.conf
+#      - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket # For avahi publishing
