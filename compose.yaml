@@ -30,3 +30,10 @@ services:
       interval: 30s
       timeout: 5s
       retries: 5
+
+  govee2mqtt:
+    image: ghcr.io/wez/govee2mqtt:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    network_mode: host
