@@ -18,21 +18,22 @@ I am running 2x [Raspberry Pi 4B](https:///www.raspberrypi.org/products/raspberr
 There are several Stacks that define various services:
 - [`home-stack.yaml`](home-stack.yaml): IoT and home automation services
 - [`proxy-stack.yaml`](proxy-stack.yaml): Run Traefik proxy server, including SSL termination, so can access services from the internet
-- [`cron-stack.yaml`](cron-stack.yaml): Launch periodic jobs like updating DNS (dynamic DNS)
+- [`cron-stack.yaml`](cron-stack.yaml): Launch periodic jobs like updating dynamic DNS and removing old containers
 
 ### Deploy a stack
 For example, the IoT "home" services: `docker stack deploy -c home-stack.yaml home`
 
-This creates a `home_default` network and each service is prefixed with `home_` eg `home_grafana`.
+This creates a `home_default` network and each service is prefixed with `home_` eg `home_homeassistant`.
 
 `docker service ls` to see which services are running.
 
 Use [secrets](https://docs.docker.com/engine/swarm/secrets/) and [configs](https://docs.docker.com/engine/swarm/configs/) so I don't have to commit sensitive info to repo.
 
 ## Docker Compose
-Swarm cannot pass through devices (like GPU or USB SDR dongles), and anyway the container needs to run on the host where the device is.
+Swarm cannot pass through devices (like Zigbee USB or USB SDR dongles), and anyway the container needs to run on the host where the device is.
 
 - `compose.yaml`: Containers that run on the primary host (Dell)
-- [`media-compose.yaml`](media-compose.yaml): Media server and download management
 
-To deploy the services: `docker compose up -d` or `docker compose -f media-compose.yaml up -d`
+To deploy the services: `docker compose up -d`
+
+Using .env for secrets, not commmited to repo.
