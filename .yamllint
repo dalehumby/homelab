@@ -1,0 +1,14 @@
+# Configuration file for yamllint
+# https://yamllint.readthedocs.io/en/stable/index.html
+
+extends: default
+
+rules:
+  indentation:
+    spaces: 2
+    indent-sequences: consistent
+  line-length:
+    max: 200
+  document-start: disable
+  truthy:
+    allowed-values: ['true', 'false', 'on', 'off']
