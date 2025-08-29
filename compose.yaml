@@ -37,3 +37,11 @@ services:
     env_file:
       - .env
     network_mode: host
+
+  iSponsorBlockTV:
+    image: ghcr.io/dmunozv04/isponsorblocktv
+    container_name: iSponsorBlockTV
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /media/cluster/isponsorblocktv:/app/data
