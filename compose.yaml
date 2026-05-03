@@ -1,17 +1,17 @@
 services:
 
-  piaware:
-    image: mikenye/piaware
-    restart: unless-stopped
-    devices:
-      - /dev/bus/usb:/dev/bus/usb
-    ports:
-      - 8090:80
-    environment:
-      - LAT=${LAT}
-      - LONG=${LONG}
-      - FEEDER_ID=${FEEDER_ID}
-      - RECEIVER_TYPE=rtlsdr
+#  piaware:
+#    image: mikenye/piaware
+#    restart: unless-stopped
+#    devices:
+#      - /dev/bus/usb:/dev/bus/usb
+#    ports:
+#      - 8090:80
+#    environment:
+#      - LAT=${LAT}
+#      - LONG=${LONG}
+#      - FEEDER_ID=${FEEDER_ID}
+#      - RECEIVER_TYPE=rtlsdr
 
   zigbee2mqtt:
     image: koenkk/zigbee2mqtt
