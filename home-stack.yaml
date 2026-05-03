@@ -41,20 +41,16 @@ services:
     image: homeassistant/home-assistant:stable
     ports:
       - "8123:8123"
-      # Apple HomeKit
-      - mode: host
-        protocol: udp
-        published: 5353
-        target: 5353
-      - mode: host
-        protocol: tcp
-        published: 21063
-        target: 21063
       # Shelly CoIoT https://www.home-assistant.io/integrations/shelly/#shelly-device-configuration-generation-1
       - mode: host
         protocol: udp
         published: 5683
         target: 5683
+      # Apple TV / HomeKit Discovery (mDNS)
+      - target: 5353
+        published: 5353
+        protocol: udp
+        mode: host
     volumes:
       - /media/cluster/homeassistant:/config
     networks:
