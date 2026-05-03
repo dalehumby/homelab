@@ -118,6 +118,14 @@ services:
       labels:
         - "traefik.enable=false"
 
+  bentopdf:
+    image: ghcr.io/alam00000/bentopdf:latest
+    ports:
+      - "8084:8080"
+    deploy:
+      labels:
+        - "traefik.enable=false"
+
 networks:
   default: {}
   proxy_default:
