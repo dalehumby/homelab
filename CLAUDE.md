@@ -15,7 +15,6 @@ docker service ls
 **Docker Compose** (single-host only; used when device passthrough is needed, e.g. USB Zigbee stick):
 ```bash
 docker compose up -d        # uses compose.yaml
-docker compose -f crowdsec-compose.yaml up -d
 ```
 
 ## Architecture
@@ -23,10 +22,11 @@ docker compose -f crowdsec-compose.yaml up -d
 | File | Purpose |
 |------|---------|
 | `home-stack.yaml` | IoT/home automation: Mosquitto MQTT, Node-RED, Home Assistant, ESPHome, Homepage, syslog-ng, ConvertX, BentoPDF |
-| `proxy-stack.yaml` | Traefik v3 reverse proxy (TLS via Let's Encrypt HTTP challenge) + Fail2ban |
+| `proxy-stack.yaml` | Traefik v3 reverse proxy (TLS via Let's Encrypt HTTP challenge) |
 | `cron-stack.yaml` | Scheduled jobs via `swarm-cronjob`: dynamic DNS update every 5 min, weekly `docker system prune` |
 | `compose.yaml` | Device-dependent services on the Dell host: Zigbee2MQTT, govee2mqtt, iSponsorBlockTV |
-| `crowdsec-compose.yaml` | CrowdSec intrusion detection (reads Traefik + syslog + HA logs) |
+
+Intrusion detection/banning is handled outside this repo by `firewatch` (a separate home-grown service tailing Traefik/Home Assistant/MikroTik logs and banning offending IPs via the MikroTik firewall).
 
 **Secrets**: Swarm stacks use Docker secrets (`external: true`) — never committed. Compose uses `.env` (gitignored). Don't add secrets to YAML files.
 
