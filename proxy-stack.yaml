@@ -24,7 +24,7 @@ services:
       - --accesslog.filepath=/logs/traefik.log
       - --accesslog.format=json
       - --accesslog.bufferingsize=0
-      - --accesslog.filters.statuscodes=400-498
+      - --accesslog.filters.statuscodes=400-599
       - --accesslog.fields.headers.defaultmode=keep
       # Provider
       - --providers.swarm=true
