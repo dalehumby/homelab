@@ -32,7 +32,7 @@ docker compose -f crowdsec-compose.yaml up -d
 
 **Networking**: Traefik is the ingress for `*.humby.co.za`. Services that need external access join the `proxy_default` network and set `traefik.enable=true` deploy labels. Services that don't need external access set `traefik.enable=false`.
 
-**Traefik TLS**: Uses `mytlschallenge` cert resolver (HTTP-01). Entrypoint `web` (port 80) auto-redirects to `websecure` (port 443). Dashboard runs insecurely on port 8080 (internal only).
+**Traefik TLS**: Uses `mytlschallenge` cert resolver (HTTP-01). HTTP (`web`, port 80) → HTTPS (`websecure`, port 443) redirection is handled by a `catchall-redirect` router in `/media/cluster/traefik/dynamic_conf.yml` (not Traefik's native entrypoint-level redirection — that runs at near-max priority and would override the intentionally plain-HTTP `nodered-insecure` route used by TLS-incapable ESP/e-paper devices). Dashboard runs insecurely on port 8080 (internal only).
 
 **Placement**: The Traefik service and `swarm-cronjob` manager are pinned to `node.role==manager`. The prune cron job runs `mode: global` (all nodes).
 
