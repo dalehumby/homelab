@@ -51,7 +51,7 @@ services:
         - "traefik.http.routers.homeassistant-secure.rule=Host(`home.humby.co.za`)"
         - "traefik.http.routers.homeassistant-secure.entrypoints=websecure"
         - "traefik.http.routers.homeassistant-secure.tls.certresolver=mytlschallenge"
-        - "traefik.http.routers.homeassistant-secure.middlewares=hsts-header@file"
+        - "traefik.http.routers.homeassistant-secure.middlewares=security-headers@file,ratelimit@file"
         - "traefik.http.routers.homeassistant-secure.service=homeassistant"
         - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
 
@@ -150,7 +150,7 @@ services:
         - "traefik.http.routers.swiparr-secure.rule=Host(`swiparr.humby.co.za`)"
         - "traefik.http.routers.swiparr-secure.entrypoints=websecure"
         - "traefik.http.routers.swiparr-secure.tls.certresolver=mytlschallenge"
-        - "traefik.http.routers.swiparr-secure.middlewares=hsts-header@file"
+        - "traefik.http.routers.swiparr-secure.middlewares=security-headers@file,ratelimit@file"
         - "traefik.http.routers.swiparr-secure.service=swiparr"
         - "traefik.http.services.swiparr.loadbalancer.server.port=4321"
 
