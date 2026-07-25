@@ -36,6 +36,10 @@ docker compose -f crowdsec-compose.yaml up -d
 
 **Placement**: The Traefik service and `swarm-cronjob` manager are pinned to `node.role==manager`. The prune cron job runs `mode: global` (all nodes).
 
+## Homepage
+
+When adding or removing a service, also update `/media/cluster/homepage/services.yaml` to keep the dashboard in sync. Add entries under the appropriate section with `icon`, `href`, and `description`.
+
 ## Linting
 
 ```bash

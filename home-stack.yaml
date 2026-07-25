@@ -126,6 +126,17 @@ services:
       labels:
         - "traefik.enable=false"
 
+  pixelfin:
+    image: ghcr.io/nothing2obvi/pixelfin:latest
+    ports:
+      - "1280:1280"
+    volumes:
+      - /media/cluster/pixelfin/data:/app/data
+      - /media/cluster/pixelfin/output:/app/output
+    deploy:
+      labels:
+        - "traefik.enable=false"
+
 networks:
   default: {}
   proxy_default:
