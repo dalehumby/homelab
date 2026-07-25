@@ -137,6 +137,32 @@ services:
       labels:
         - "traefik.enable=false"
 
+  swiparr:
+    image: ghcr.io/m3sserstudi0s/swiparr:latest
+    ports:
+      - "8085:4321"
+    environment:
+      - PROVIDER=jellyfin
+      - PROVIDER_LOCK=true
+      - JELLYFIN_URL=http://truenas.lan:30013/
+      - JELLYFIN_PUBLIC_URL=https://jellyfin.humby.co.za/
+      - ALLOW_PRIVATE_PROVIDER_URLS=true
+      - APP_PUBLIC_URL=https://swiparr.humby.co.za/
+      - USE_SECURE_COOKIES=true
+    volumes:
+      - /media/cluster/swiparr:/app/data
+    networks:
+      - default
+      - proxy_default
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.swiparr-secure.rule=Host(`swiparr.humby.co.za`)"
+        - "traefik.http.routers.swiparr-secure.entrypoints=websecure"
+        - "traefik.http.routers.swiparr-secure.tls.certresolver=mytlschallenge"
+        - "traefik.http.routers.swiparr-secure.service=swiparr"
+        - "traefik.http.services.swiparr.loadbalancer.server.port=4321"
+
 networks:
   default: {}
   proxy_default:
