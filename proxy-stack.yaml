@@ -37,9 +37,10 @@ services:
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       # No native web->websecure redirect here: it runs at near-max priority and
-      # overrides every router, including the intentionally-plain-HTTP nodered-insecure
-      # route for TLS-incapable ESP/e-paper devices. HTTP->HTTPS redirect for everything
-      # else is handled by the lower-priority catchall-redirect router in dynamic_conf.yml.
+      # would override every router, leaving no way to carve out a plain-HTTP
+      # exception (e.g. for a future TLS-incapable device). HTTP->HTTPS redirect
+      # is instead handled by the lower-priority catchall-redirect router in
+      # dynamic_conf.yml, which respects individual router priorities.
       # Cert resolver
       - --certificatesresolvers.mytlschallenge.acme.httpchallenge.entrypoint=web
       - --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
