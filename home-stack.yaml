@@ -68,7 +68,7 @@ services:
         - "traefik.enable=false"
 
   homepage:
-    image: ghcr.io/gethomepage/homepage:latest
+    image: ghcr.io/gethomepage/homepage:dev
     ports:
       - "8081:3000"
     environment:
