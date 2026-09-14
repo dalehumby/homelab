@@ -9,7 +9,7 @@ services:
     volumes:
       - /media/cluster/mosquitto/:/mosquitto/config/
       - /media/cluster/mosquitto/:/mosquitto/data
-      - /var/log:/mosquitto/log
+      - /media/cluster/mosquitto/log:/mosquitto/log
     deploy:
       labels:
         - "traefik.enable=false"
